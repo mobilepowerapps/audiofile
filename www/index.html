@@ -63,7 +63,9 @@ var Acache = {
 						result = fname ;
 						var file = URL.createObjectURL(f); 
 						document.getElementById('audioPlayer').src = file; 
- 
+ 						document.getElementById('audioPlayer').play() ;
+						consolelog("playing...");
+
 					},
 					function( err ){ // fail not in cache
 						consolelog("ft:"+url) ;
