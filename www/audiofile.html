@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<script type='text/javascript'> 
+	function handleFiles(files){ 
+		console.log(files[0]);
+		console.log("files>>"+files[0]);
+		var file = URL.createObjectURL(files[0]); 
+		console.log("URL>>"+file) ;
+		document.getElementById('audioPlayer').src = file; 
+        } 
+</script> 
+<audio id='audioPlayer' controls ></audio> 
+
+<br>
+<input type='file' id='selectedFile' onchange='handleFiles(this.files)' /> 
+
+
+</body>
+</html>

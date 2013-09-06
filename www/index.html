@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <script type="text/javascript" src="phonegap.js"></script>
+
+        <title>Test</title>
+
+<script>
+function consolelog( msg ) {
+	var y=document.getElementById("mess");
+	y.innerHTML= y.innerHTML+ "<br>Log: " + msg;
+
+}
+
+//
+// testing cache router
+// 
+var cache = {
+	url: "http://cpt.aws.af.cm/cpt",	// web server
+	dir: "cpt",							// dir for sdcard
+
+	findFile: function( f ){
+		return Acache.findFile( f );
+//		return Bcache.findFile( f );
+		}
+} ;
+// browser version - no phonegap, only from server.
+var Bcache = {
+
+	findFile: function( f ){
+		return cache.url+"/"+ f ;
+		}
+} ;
+//
+//	Phonegap load thru cache
+//	call
+//		"workout.mp4" or "hooray.mp3" etc
+//	returns
+//		"/assets/www/workout.mp4" etc
+
+var Acache = {
+	url: "http://cpt.aws.af.cm/cpt",	// web server
+	dir: "cpt",							// dir for sdcard
+	
+	// file exist get from server
+	findFile: function( f ){
+		var url = encodeURI( cache.url + "/" + f ) ;
+		var result = url ;
+		window.requestFileSystem(
+			LocalFileSystem.PERSISTENT,
+			0, 
+			function(fileSystem) { 
+				var fname = fileSystem.root.fullPath + "/" + cache.dir + "/" + f ;
+				consolelog("getfile:"+fname);
+				fileSystem.root.getFile(
+					cache.dir + "/" + f,
+					{create: false}, 
+					function( f ){ // success
+						consolelog("in cache "+f.name);
+						result = fname ;
+					},
+					function( err ){ // fail not in cache
+						consolelog("ft:"+url) ;
+						var ft = new FileTransfer();
+						ft.download(
+							url,
+							fname,
+							function (entry) { // success
+								consolelog("Download: "+ entry.fullPath);
+							},
+							function (error) {
+								consolelog("Download Err: "+ url);
+							}
+						);
+					}
+				); 
+			},
+			null); 
+		return result ;
+		}
+
+	
+} ;
+
+
+
+
+</script>	
+		
+
+</head>
+<body>
+
+<script type='text/javascript'> 
+	function handleFiles(files){ 
+		console.log(files[0]);
+		console.log("files>>"+files[0]);
+		var file = URL.createObjectURL(files[0]); 
+		console.log("URL>>"+file) ;
+		document.getElementById('audioPlayer').src = file; 
+        } 
+</script> 
+<audio id='audioPlayer' controls ></audio> 
+
+<br>
+<input type='file' id='selectedFile' onchange='handleFiles(this.files)' /> 
+<br>
+<br>
+<br>Stuff???<br>
+<button onclick="Acache.findFile('hooray.mp3');">Load hooray.mp3</button><br>
+<button onclick="Acache.findFile('workout.mp4');">Load workout.mp4</button><br>
+
+
+<div id="mess"></div>
+
+
+</body>
+</html>
