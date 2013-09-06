@@ -9,12 +9,21 @@
         <title>Test</title>
 
 <script>
-function consolelog( msg ) {
+
+// !!!!!!!!!!!!
+function console.log( msg ) {
 	var y=document.getElementById("mess");
 	y.innerHTML= y.innerHTML+ "<br>Log: " + msg;
 
 }
+(function(){
+    var oldLog = console.log;
+    console.log = function (message) {
+       	y.innerHTML= y.innerHTML+ "<br>Log: " + message;
 
+        oldLog.apply(console, arguments);
+    };
+})();
 //
 // testing cache router
 // 
@@ -54,30 +63,33 @@ var Acache = {
 			0, 
 			function(fileSystem) { 
 				var fname = fileSystem.root.fullPath + "/" + cache.dir + "/" + f ;
-				consolelog("getfile:"+fname);
+				console.log("getfile:"+fname);
 				fileSystem.root.getFile(
 					cache.dir + "/" + f,
 					{create: false}, 
 					function( f ){ // success
-						consolelog("in cache "+f.name);
+						console.log("in cache "+f.name);
 						result = fname ;
-						var file = URL.createObjectURL(f); 
-						document.getElementById('audioPlayer').src = file; 
+//						var file = window.URL.createObjectURL(f); 
+						document.getElementById('audioPlayer').src = fname; 
  						document.getElementById('audioPlayer').play() ;
-						consolelog("playing...");
+//						document.getElementById('audioPlayer1').src = fname; 
+// 						document.getElementById('audioPlayer1').play() ;
+						
+						console.log("playing...");
 
 					},
 					function( err ){ // fail not in cache
-						consolelog("ft:"+url) ;
+						console.log("ft:"+url) ;
 						var ft = new FileTransfer();
 						ft.download(
 							url,
 							fname,
 							function (entry) { // success
-								consolelog("Download: "+ entry.fullPath);
+								console.log("Download: "+ entry.fullPath);
 							},
 							function (error) {
-								consolelog("Download Err: "+ url);
+								console.log("Download Err: "+ url);
 							}
 						);
 					}
@@ -103,12 +115,13 @@ var Acache = {
 	function handleFiles(files){ 
 		console.log(files[0]);
 		console.log("files>>"+files[0]);
-		var file = URL.createObjectURL(files[0]); 
+		var file = window.URL.createObjectURL(files[0]); 
 		console.log("URL>>"+file) ;
 		document.getElementById('audioPlayer').src = file; 
         } 
 </script> 
-<audio id='audioPlayer' controls ></audio> 
+<audio id='audioPlayer' controls ></audio><br>
+<audio id='audioPlayer1' controls ></audio><br>
 
 <br>
 <input type='file' id='selectedFile' onchange='handleFiles(this.files)' /> 
