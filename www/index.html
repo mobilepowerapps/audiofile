@@ -11,14 +11,11 @@
 <script>
 
 // !!!!!!!!!!!!
-function console.log( msg ) {
-	var y=document.getElementById("mess");
-	y.innerHTML= y.innerHTML+ "<br>Log: " + msg;
 
-}
 (function(){
     var oldLog = console.log;
     console.log = function (message) {
+		var y = document.getElementById("mess") ;
        	y.innerHTML= y.innerHTML+ "<br>Log: " + message;
 
         oldLog.apply(console, arguments);
@@ -58,6 +55,7 @@ var Acache = {
 	findFile: function( f ){
 		var url = encodeURI( cache.url + "/" + f ) ;
 		var result = url ;
+console.log("ff") ;
 		window.requestFileSystem(
 			LocalFileSystem.PERSISTENT,
 			0, 
@@ -121,7 +119,7 @@ var Acache = {
         } 
 </script> 
 <audio id='audioPlayer' controls ></audio><br>
-<audio id='audioPlayer1' controls ></audio><br>
+<audio id='audioPlayer1' src="file:///storage/sdcard/cpt/horray.mp3" controls ></audio><br>
 
 <br>
 <input type='file' id='selectedFile' onchange='handleFiles(this.files)' /> 
